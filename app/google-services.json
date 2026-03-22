@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569503647272",
+    "project_id": "disneyverseapp",
+    "storage_bucket": "disneyverseapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569503647272:android:df524215bc91117fb8171d",
+        "android_client_info": {
+          "package_name": "com.example.disneyverse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYkv95c-9wZiqSVXdqwgc1-AmqyJThIgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

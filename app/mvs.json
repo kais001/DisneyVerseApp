@@ -1,0 +1,103 @@
+{
+  "universes": {
+    "marvel": {
+      "id": "marvel",
+      "name": "Marvel",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
+    },
+    "pixar": {
+      "id": "pixar",
+      "name": "Pixar",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/70/Pixar_logo.svg"
+    },
+    "starwars": {
+      "id": "starwars",
+      "name": "Star Wars",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Star_Wars_Logo.svg"
+    },
+    "disney": {
+      "id": "disney",
+      "name": "Disney",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/Disney_wordmark.svg"
+    },
+    "avatar": {
+      "id": "avatar",
+      "name": "Avatar",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/25/Avatar-Logo.svg"
+    }
+  },
+  "films": {
+    "film1": {
+      "id": "film1",
+      "title": "Iron Man",
+      "universeId": "marvel",
+      "category": "Infinity Saga",
+      "releaseDate": "2008-05-02",
+      "posterUrl": "https://m.media-amazon.com/images/I/81UkQfS5p-L.jpg",
+      "description": "Tony Stark becomes Iron Man."
+    },
+    "film2": {
+      "id": "film2",
+      "title": "Avengers: Endgame",
+      "universeId": "marvel",
+      "category": "Infinity Saga",
+      "releaseDate": "2019-04-26",
+      "posterUrl": "https://m.media-amazon.com/images/I/81ExhpBEbHL.jpg",
+      "description": "The Avengers assemble for the final battle."
+    },
+    "film3": {
+      "id": "film3",
+      "title": "Toy Story",
+      "universeId": "pixar",
+      "category": "Toy Story",
+      "releaseDate": "1995-11-22",
+      "posterUrl": "https://m.media-amazon.com/images/I/91KjFjP4bxL.jpg",
+      "description": "Woody and Buzz begin their adventure."
+    },
+    "film4": {
+      "id": "film4",
+      "title": "Cars",
+      "universeId": "pixar",
+      "category": "Cars",
+      "releaseDate": "2006-06-09",
+      "posterUrl": "https://m.media-amazon.com/images/I/91zP8G8U8OL.jpg",
+      "description": "Lightning McQueen gets lost on Route 66."
+    },
+    "film5": {
+      "id": "film5",
+      "title": "Star Wars: A New Hope",
+      "universeId": "starwars",
+      "category": "Skywalker Saga",
+      "releaseDate": "1977-05-25",
+      "posterUrl": "https://m.media-amazon.com/images/I/81aA7hEEykL.jpg",
+      "description": "Luke joins the fight against the Empire."
+    },
+    "film6": {
+      "id": "film6",
+      "title": "The Lion King",
+      "universeId": "disney",
+      "category": "Disney Classics",
+      "releaseDate": "1994-06-15",
+      "posterUrl": "https://m.media-amazon.com/images/I/91l+1D6S3UL.jpg",
+      "description": "Simba grows into the future king."
+    },
+    "film7": {
+      "id": "film7",
+      "title": "Frozen",
+      "universeId": "disney",
+      "category": "Frozen",
+      "releaseDate": "2013-11-27",
+      "posterUrl": "https://m.media-amazon.com/images/I/91K8jN8zV-L.jpg",
+      "description": "Elsa and Anna save their kingdom."
+    },
+    "film8": {
+      "id": "film8",
+      "title": "Avatar",
+      "universeId": "avatar",
+      "category": "Avatar Saga",
+      "releaseDate": "2009-12-18",
+      "posterUrl": "https://m.media-amazon.com/images/I/71gM0rR8wUL.jpg",
+      "description": "Jake Sully discovers Pandora."
+    }
+  }
+}
