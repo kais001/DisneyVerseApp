@@ -2,9 +2,9 @@ package com.example.disneyverse.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.disneyverse.screens.FilmDetailScreen
 import com.example.disneyverse.screens.HomeScreen
@@ -82,7 +82,9 @@ fun AppNavGraph(startDestination: String) {
 
         composable(
             route = "film/{filmId}",
-            arguments = listOf(navArgument("filmId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("filmId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             FilmDetailScreen(
                 filmId = backStackEntry.arguments?.getString("filmId") ?: "",
