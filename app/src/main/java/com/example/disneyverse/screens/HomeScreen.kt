@@ -71,9 +71,14 @@ fun HomeScreen(
 ) {
     val repo = remember { FirebaseRepository() }
     var universes by remember { mutableStateOf<List<Universe>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        repo.getUniverses { universes = it }
+        isLoading = true
+        repo.getUniverses {
+            universes = it
+            isLoading = false
+        }
     }
 
     Box(
@@ -156,7 +161,7 @@ fun HomeScreen(
                     HomeHeroSection()
                 }
 
-                if (universes.isEmpty()) {
+                if (isLoading) {
                     item {
                         Box(
                             modifier = Modifier
@@ -166,6 +171,17 @@ fun HomeScreen(
                         ) {
                             CircularProgressIndicator(color = Color.White)
                         }
+                    }
+                } else if (universes.isEmpty()) {
+                    item {
+                        Text(
+                            text = "No universes found.",
+                            color = Color.White.copy(alpha = 0.78f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 30.dp),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 } else {
                     itemsIndexed(universes) { index, universe ->

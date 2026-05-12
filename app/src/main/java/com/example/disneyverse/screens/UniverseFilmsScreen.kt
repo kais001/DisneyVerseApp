@@ -72,10 +72,24 @@ fun UniverseFilmsScreen(
 ) {
     val repo = remember { FirebaseRepository() }
     var films by remember { mutableStateOf<List<Film>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(universeId) {
-        repo.getFilmsByUniverse(universeId) { films = it }
+        isLoading = true
+        errorMessage = ""
+        repo.getFilmsByUniverse(universeId, {
+            films = it
+            isLoading = false
+        }) {
+            errorMessage = it
+            isLoading = false
+        }
     }
+
+    val groupedFilms = films
+        .groupBy { it.category.ifBlank { "General" } }
+        .toSortedMap()
 
     Box(
         modifier = Modifier
@@ -132,7 +146,7 @@ fun UniverseFilmsScreen(
                     )
                 }
 
-                if (films.isEmpty()) {
+                if (isLoading) {
                     item {
                         Box(
                             modifier = Modifier
@@ -143,12 +157,31 @@ fun UniverseFilmsScreen(
                             CircularProgressIndicator(color = Color.White)
                         }
                     }
-                } else {
-                    items(films) { film ->
-                        FilmRowPremiumCard(
-                            film = film,
-                            onClick = { onFilmClick(film.id) }
+                } else if (films.isEmpty()) {
+                    item {
+                        Text(
+                            text = if (errorMessage.isNotEmpty()) errorMessage else "No films found in this universe.",
+                            color = Color.White.copy(alpha = 0.78f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 30.dp),
+                            style = MaterialTheme.typography.bodyLarge
                         )
+                    }
+                } else {
+                    groupedFilms.forEach { (category, filmsInCategory) ->
+                        item {
+                            FilmCategoryHeader(
+                                category = category,
+                                count = filmsInCategory.size
+                            )
+                        }
+                        items(filmsInCategory) { film ->
+                            FilmRowPremiumCard(
+                                film = film,
+                                onClick = { onFilmClick(film.id) }
+                            )
+                        }
                     }
                 }
 
@@ -210,6 +243,27 @@ private fun FilmsHeaderCard(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
+    }
+}
+
+@Composable
+private fun FilmCategoryHeader(
+    category: String,
+    count: Int
+) {
+    Column(modifier = Modifier.padding(vertical = 6.dp)) {
+        Text(
+            text = category,
+            color = Color.White,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.ExtraBold
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "$count title(s)",
+            color = Color.White.copy(alpha = 0.72f),
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 

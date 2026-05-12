@@ -38,6 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -84,13 +85,16 @@ fun FilmDetailScreen(
     var owners by remember { mutableStateOf<List<User>>(emptyList()) }
     var getRidUsers by remember { mutableStateOf<List<User>>(emptyList()) }
     var message by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
 
     fun reload() {
+        isLoading = true
         repo.getFilmById(filmId) { film = it }
         repo.getCurrentUserFilmStatus(filmId) { myStatus = it }
         repo.getOwnersAndGetRidUsers(filmId) { o, g ->
             owners = o
             getRidUsers = g
+            isLoading = false
         }
     }
 
@@ -139,6 +143,7 @@ fun FilmDetailScreen(
                 )
             }
         ) { padding ->
+            val currentFilm = film
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -147,9 +152,29 @@ fun FilmDetailScreen(
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                film?.let { f ->
+                if (isLoading) {
                     item {
-                        FilmHeroCard(film = f, myStatus = myStatus)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    }
+                } else if (currentFilm == null) {
+                    item {
+                        Text(
+                            text = "Film not found.",
+                            color = Color.White.copy(alpha = 0.78f),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.fillMaxWidth().padding(top = 40.dp)
+                        )
+                    }
+                } else {
+                    item {
+                        FilmHeroCard(film = currentFilm, myStatus = myStatus)
                     }
 
                     item {

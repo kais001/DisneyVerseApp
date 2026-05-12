@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Card
@@ -80,8 +81,9 @@ fun ProfileScreen(
     var own by remember { mutableStateOf(0) }
     var getRid by remember { mutableStateOf(0) }
     var ownedFilms by remember { mutableStateOf<List<Film>>(emptyList()) }
+    var message by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+    fun reload() {
         repo.getMyStatusesAndOwnedFilms { u, w, wt, o, g, films ->
             user = u
             watched = w
@@ -90,6 +92,10 @@ fun ProfileScreen(
             getRid = g
             ownedFilms = films
         }
+    }
+
+    LaunchedEffect(Unit) {
+        reload()
     }
 
     Box(
@@ -178,6 +184,22 @@ fun ProfileScreen(
                     OwnedCollectionHeader(count = ownedFilms.size)
                 }
 
+                if (message.isNotEmpty()) {
+                    item {
+                        Surface(
+                            color = Color(0xFF7E8BFF).copy(alpha = 0.16f),
+                            shape = RoundedCornerShape(18.dp)
+                        ) {
+                            Text(
+                                text = message,
+                                color = Color.White,
+                                modifier = Modifier.padding(14.dp),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+
                 if (ownedFilms.isEmpty()) {
                     item {
                         Surface(
@@ -197,7 +219,17 @@ fun ProfileScreen(
                             items(ownedFilms) { film ->
                                 OwnedFilmCard(
                                     film = film,
-                                    onClick = { onFilmClick(film.id) }
+                                    onClick = { onFilmClick(film.id) },
+                                    onDelete = {
+                                        repo.removeFilmStatus(
+                                            filmId = film.id,
+                                            onSuccess = {
+                                                message = "Removed ${film.title} from your owned list"
+                                                reload()
+                                            },
+                                            onError = { message = it }
+                                        )
+                                    }
                                 )
                             }
                         }
@@ -350,7 +382,8 @@ private fun OwnedCollectionHeader(count: Int) {
 @Composable
 private fun OwnedFilmCard(
     film: Film,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -361,30 +394,46 @@ private fun OwnedFilmCard(
             containerColor = Color.White.copy(alpha = 0.07f)
         )
     ) {
-        Column {
-            AsyncImage(
-                model = film.posterUrl,
-                contentDescription = film.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-                    .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-            )
-
-            Column(modifier = Modifier.padding(14.dp)) {
-                Text(
-                    text = film.title,
-                    color = Color.White,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2
+        Box {
+            Column {
+                AsyncImage(
+                    model = film.posterUrl,
+                    contentDescription = film.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = film.releaseDate,
-                    color = Color.White.copy(alpha = 0.72f),
-                    style = MaterialTheme.typography.bodyMedium
+
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Text(
+                        text = film.title,
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = film.releaseDate,
+                        color = Color.White.copy(alpha = 0.72f),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            IconButton(
+                onClick = onDelete,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .size(28.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "Remove owned",
+                    tint = Color.White
                 )
             }
         }

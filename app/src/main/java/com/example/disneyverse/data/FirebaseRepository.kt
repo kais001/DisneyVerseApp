@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase
 class FirebaseRepository {
 
     private val auth = FirebaseAuth.getInstance()
-    private val db = FirebaseDatabase.getInstance().reference
+    private val db = FirebaseDatabase.getInstance("https://disneyverseapp-default-rtdb.europe-west1.firebasedatabase.app").reference
 
     fun currentUserId(): String? = auth.currentUser?.uid
 
@@ -50,25 +50,40 @@ class FirebaseRepository {
 
     fun getUniverses(onResult: (List<Universe>) -> Unit) {
         db.child("universes").get().addOnSuccessListener { snapshot ->
-            val universes = snapshot.children.mapNotNull { it.getValue(Universe::class.java) }
+            val universes = snapshot.children.mapNotNull {
+                it.getValue(Universe::class.java)?.copy(id = it.key ?: "")
+            }
             onResult(universes)
         }
     }
 
-    fun getFilmsByUniverse(universeId: String, onResult: (List<Film>) -> Unit) {
-        db.child("films").get().addOnSuccessListener { snapshot ->
-            val films = snapshot.children
-                .mapNotNull { it.getValue(Film::class.java) }
-                .filter { it.universeId == universeId }
-                .sortedBy { it.releaseDate }
+    fun getFilmsByUniverse(
+        universeId: String,
+        onResult: (List<Film>) -> Unit,
+        onError: (String) -> Unit = {}
+    ) {
+        db.child("films").get()
+            .addOnSuccessListener { snapshot ->
+                val films = snapshot.children
+                    .mapNotNull {
+                        it.getValue(Film::class.java)?.copy(id = it.key ?: "")
+                    }
+                    .filter { film ->
+                        film.universeId.equals(universeId, ignoreCase = true)
+                    }
+                    .sortedBy { it.releaseDate }
 
-            onResult(films)
-        }
+                onResult(films)
+            }
+            .addOnFailureListener {
+                onError(it.message ?: "Failed to load films")
+                onResult(emptyList())
+            }
     }
 
     fun getFilmById(filmId: String, onResult: (Film?) -> Unit) {
         db.child("films").child(filmId).get().addOnSuccessListener { snapshot ->
-            onResult(snapshot.getValue(Film::class.java))
+            onResult(snapshot.getValue(Film::class.java)?.copy(id = snapshot.key ?: ""))
         }
     }
 
